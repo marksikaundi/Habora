@@ -1,4 +1,5 @@
 import { useFocusEffect } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import {
   Pressable,
@@ -11,6 +12,8 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { MonthlyHeatmap } from "@/components/monthly-heatmap";
+import { HomeActivityCalendar } from "@/components/home-activity-calendar";
+import { HomeMainActivities } from "@/components/home-main-activities";
 import { TodayDashboard } from "@/components/today-dashboard";
 import { WeeklyReviewCard } from "@/components/weekly-review-card";
 import JourneySvg from "@/assets/undraw/journey.svg";
@@ -45,9 +48,12 @@ function greetingForNow(): string {
 export default function HomeScreen() {
   const {
     habits,
+    activity,
+    addActivity,
     weekCheckInSeries,
     toggleHabit,
   } = useAccountabilityBoard();
+  const router = useRouter();
   const { loaded: streakLoaded, snapshot: streak } = useStreakGamification();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
@@ -61,6 +67,13 @@ export default function HomeScreen() {
   );
 
   const [selectedDate, setSelectedDate] = useState(() => new Date());
+  const selectedDateActivityCount = useMemo(
+    () =>
+      activity.filter((item) =>
+        isSameCalendarDay(new Date(item.createdAtISO), selectedDate),
+      ).length,
+    [activity, selectedDate],
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -81,6 +94,69 @@ export default function HomeScreen() {
   };
 
   const greeting = greetingForNow();
+
+  const openPrefilledActivity = (activityId: string) => {
+    if (activityId === "physical") {
+      router.push({
+        pathname: "/add-activity",
+        params: {
+          title: "Running",
+          detail: "I completed my physical activity today.",
+        },
+      });
+      return;
+    }
+    if (activityId === "hydrate") {
+      router.push({
+        pathname: "/add-activity",
+        params: {
+          title: "Hydration check",
+          detail: "Water target: 2L completed.",
+        },
+      });
+      return;
+    }
+    if (activityId === "todo") {
+      router.push({
+        pathname: "/add-activity",
+        params: {
+          title: "Todo progress",
+          detail: "I completed my top tasks for today.",
+        },
+      });
+      return;
+    }
+    router.push({
+      pathname: "/add-activity",
+      params: {
+        title: "Recovery break",
+        detail: "I finished a stretch or breathing session.",
+      },
+    });
+  };
+
+  const quickCompleteMainActivity = async (activityId: string) => {
+    const definitions: Record<string, { title: string; detail: string }> = {
+      physical: {
+        title: "Physical activity completed",
+        detail: "Logged a running/workout session.",
+      },
+      hydrate: {
+        title: "Hydration target hit",
+        detail: "Completed today's water intake goal.",
+      },
+      todo: {
+        title: "Todo tasks completed",
+        detail: "Finished priority tasks for today.",
+      },
+      recovery: {
+        title: "Recovery session complete",
+        detail: "Took time for stretching or breathwork.",
+      },
+    };
+    const payload = definitions[activityId] ?? definitions.recovery;
+    await addActivity(payload);
+  };
 
   return (
     <ScrollView
@@ -189,6 +265,14 @@ export default function HomeScreen() {
         streakLoaded={streakLoaded}
         streak={streak}
       />
+      <HomeMainActivities
+        todoCountToday={selectedDateActivityCount}
+        onOpenActivity={openPrefilledActivity}
+        onQuickComplete={(activityId) => {
+          void quickCompleteMainActivity(activityId);
+        }}
+      />
+      <HomeActivityCalendar activity={activity} selectedDate={selectedDate} />
       <WeeklyReviewCard week={weekCheckInSeries} />
       <MonthlyHeatmap />
 

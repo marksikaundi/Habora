@@ -1,5 +1,5 @@
-import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import {
   Alert,
   KeyboardAvoidingView,
@@ -25,12 +25,30 @@ import { useAccountabilityBoard } from "@/lib/accountability-board";
 
 export default function AddActivityScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams<{
+    title?: string;
+    detail?: string;
+  }>();
   const insets = useSafeAreaInsets();
   const { addActivity } = useAccountabilityBoard();
 
   const [title, setTitle] = useState("");
   const [detail, setDetail] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const seededTitle =
+      typeof params.title === "string" ? params.title.trim() : "";
+    const seededDetail =
+      typeof params.detail === "string" ? params.detail.trim() : "";
+
+    if (seededTitle) {
+      setTitle(seededTitle);
+    }
+    if (seededDetail) {
+      setDetail(seededDetail);
+    }
+  }, [params.detail, params.title]);
 
   const save = async () => {
     const trimmed = title.trim();
