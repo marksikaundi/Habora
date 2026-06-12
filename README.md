@@ -1,23 +1,43 @@
-# Welcome to your Expo app 👋
+# Habora
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Habora is a habit and momentum tracker with social accountability. Built with [Expo](https://expo.dev) and [Expo Router](https://docs.expo.dev/router/introduction/), it runs on iOS, Android, and web.
 
-## HabitKes
+## Features
 
-HabitKes is a habit tracker with social accountability. The home tab shows streaks, live friends, and a realtime feed, while the crew tab lets you add accountability partners.
+### Home
 
-### Appwrite setup
+Daily dashboard with habit check-ins, streak stats, a weekly review card, activity calendar, and monthly heatmap. Track your main activities and see how consistent you've been over time.
 
-Set these Expo public env vars to connect the app to Appwrite:
+### Inspirations
 
-- `EXPO_PUBLIC_APPWRITE_ENDPOINT`
-- `EXPO_PUBLIC_APPWRITE_PROJECT_ID`
-- `EXPO_PUBLIC_APPWRITE_DATABASE_ID`
-- `EXPO_PUBLIC_APPWRITE_HABITS_COLLECTION_ID`
-- `EXPO_PUBLIC_APPWRITE_FRIENDS_COLLECTION_ID`
-- `EXPO_PUBLIC_APPWRITE_ACTIVITY_COLLECTION_ID`
+Daily sparks, quotes, and prompts to keep you motivated between sessions.
 
-The app uses Appwrite `Databases` for habits, friends, and activity records, plus `Realtime` subscriptions on those collections. If the env vars are missing, it stays in demo mode with the same UI.
+### Add activity (+)
+
+Log what you did from anywhere in the app via the center tab button. Activities sync to your crew feed when Appwrite is configured.
+
+### Rituals (Library)
+
+Curated ritual collections—morning fuel, wind-down, deep work sessions, and accountability prompts. Tap a ritual to pre-fill an activity log.
+
+### Journey
+
+Streak gamification with spark points, milestone rewards, and unlockable themes. Progress is stored locally on device.
+
+### Activity (crew feed)
+
+See everything you and your accountability partners log. Invite friends, view live status, and sync with Appwrite when connected.
+
+### Onboarding
+
+Optional intake flow for goals and preferences. Enable it by changing the initial redirect in `app/index.tsx` from `"/(tabs)"` to `"/onboarding"`.
+
+## Tech stack
+
+- **Expo 54** with React Native and the New Architecture
+- **Expo Router** for file-based navigation
+- **Appwrite** for habits, friends, activity records, and optional realtime sync
+- **AsyncStorage** for local streak and check-in history
 
 ## Get started
 
@@ -27,41 +47,53 @@ The app uses Appwrite `Databases` for habits, friends, and activity records, plu
    npm install
    ```
 
-2. Start the app
+2. Start the development server
 
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+   Then open the app in a [development build](https://docs.expo.dev/develop/development-builds/introduction/), iOS simulator, Android emulator, or Expo Go.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+3. (Optional) Configure Appwrite
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+   Set these Expo public environment variables to connect to your backend:
 
-## Get a fresh project
+   - `EXPO_PUBLIC_APPWRITE_ENDPOINT`
+   - `EXPO_PUBLIC_APPWRITE_PROJECT_ID`
+   - `EXPO_PUBLIC_APPWRITE_DATABASE_ID`
+   - `EXPO_PUBLIC_APPWRITE_HABITS_COLLECTION_ID`
+   - `EXPO_PUBLIC_APPWRITE_FRIENDS_COLLECTION_ID`
+   - `EXPO_PUBLIC_APPWRITE_ACTIVITY_COLLECTION_ID`
 
-When you're ready, run:
+   To enable realtime subscriptions on those collections, also set:
 
-```bash
-npm run reset-project
+   - `EXPO_PUBLIC_APPWRITE_ENABLE_REALTIME=true`
+
+   Without these variables, the app runs in **demo mode** with the same UI and local seed data.
+
+## Project structure
+
+```
+app/                  # Expo Router screens and layouts
+  (tabs)/             # Main tab bar (Home, Inspirations, Rituals, Journey)
+  add-activity.tsx    # Activity logging modal
+  onboarding.tsx      # Optional intake flow
+components/           # Shared UI (charts, heatmap, dashboard cards)
+lib/                  # Accountability board, streak gamification, calendar utils
+constants/            # Theme tokens and fonts
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Scripts
 
-## Learn more
+| Command            | Description                |
+| ------------------ | -------------------------- |
+| `npm start`        | Start Expo dev server      |
+| `npm run ios`      | Open on iOS simulator      |
+| `npm run android`  | Open on Android emulator   |
+| `npm run web`      | Open in the browser        |
+| `npm run lint`     | Run ESLint                 |
 
-To learn more about developing your project with Expo, look at the following resources:
+## Building for production
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+This project includes [EAS Build](https://docs.expo.dev/build/introduction/) configuration. See `eas.json` for development, preview, and production profiles.
