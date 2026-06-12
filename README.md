@@ -1,6 +1,6 @@
 # Habora
 
-Habora is a habit and momentum tracker with social accountability. Built with [Expo](https://expo.dev) and [Expo Router](https://docs.expo.dev/router/introduction/), it runs on iOS, Android, and web.
+Habora is a habit and momentum tracker with social accountability. , it runs on iOS, Android, and web.
 
 ## Features
 
